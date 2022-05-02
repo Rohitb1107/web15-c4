@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import "../App.css";
+import axios from 'axios';
 
 export const Orders = () => {
-  const [orderData, setOrderData] = useState([]);
-
-  useEffect(() => {
-    axios.get("http://localhost:8080/orders").then(({ data }) => {
-      setOrderData(data);
-      console.log(data);
-    });
-  }, []);
-
+  //  Get all data when admin logs in and populate it
+  // store it in redux
+  const [alldata , setalldata]= useState([])
+  useEffect(()=>{
+    const respons = axios.get("http://localhost:8080/orders").
+    then((respons)=>{
+      setalldata(respons.data)
+      
+    })
+  },[])
+  
   return (
     <div>
       <div>
@@ -35,33 +35,33 @@ export const Orders = () => {
               <th>Accept</th>
             </tr>
           </thead>
-          <tbody>
-            {orderData.map((el) => {
-              return (
-                <tr className="orders-row" key={el.id}>
-                  <td className="id">{el.id}</td>
-                  <td className="problem">{el.problem}</td>
-                  <td className="owner">{el.owner_name}</td>
-                  <td className="status">{el.status}</td>
-                  <td className="cost">{el.cost}</td>
-                  <td className="change-status">
-                    {/* Show select dropdown only if status is Not Accepted */}
-                    <select className="changeStatus" name="changeStatus">
-                      <option value="Pending">Pending</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Done">Done</option>
-                      <option value="Not Accepted">Not Accepted</option>
-                    </select>
-                  </td>
-                  <td className="accept">
-                    {/* Show this button only if status is Not Accepted */}
-                    {/* on change make request to update it in db, and show changed status in table */}
-                    <button>Accept</button>
-                  </td>
-                </tr>
-              );
-            })}
+        {alldata.map((e)=>{
+          return <tbody>
+            <tr className="orders-row">
+              <td className="id">{e.id}</td>
+              <td className="problem">{e.problem}</td>
+              <td className="owner">{e.owner_name}</td>
+              <td className="status">{e.status}</td>
+              <td className="cost">{e.cost}</td>
+              <td className="change-status">
+                {/* Show select dropdown only if status is Not Accepted */}
+                {e.status=== "Not Accepted" ? <select className="changeStatus" name="changeStatus">
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Done">Done</option>
+                  <option value="Not Accepted">Not Accepted</option>
+                </select> : " "}
+              </td>
+              <td className="accept">
+                {/* Show this button only if status is Not Accepted */}
+                {/* on change make request to update it in db, and show changed status in table */}
+                  {e.status=== "Not Accepted" ? "" : <button>Accept</button> }
+                
+              </td>
+            </tr>
           </tbody>
+        
+        })}
         </table>
       </div>
     </div>
